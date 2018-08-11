@@ -10,8 +10,8 @@ import java.net.UnknownHostException;
 
 
 public class ChatClient extends Frame {
-    Socket s;
-
+    Socket s = null;
+    DataOutputStream dos;
     TextField tfTxt = new TextField();
     //A TextField object is a text component that allows for the editing of a single line of text.
 
@@ -51,9 +51,20 @@ public class ChatClient extends Frame {
     public void connect() {
         try {
             s = new Socket("127.0.0.1", 8888);
+            dos = new DataOutputStream(s.getOutputStream());
             System.out.println("connected!");
         } catch (UnknownHostException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void disconnect() {
+
+        try {
+            dos.close();
+            s.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -68,7 +79,10 @@ public class ChatClient extends Frame {
             taContent.setText(str); // put string into taContent;
             tfTxt.setText("");
             try {
-                DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+                dos.writeUTF(str);//Writes a string to the underlying output stream
+                dos.flush();//Flushes this data output stream;This forces any buffered output bytes to be written out to the stream.
+                //dos.close();
+
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
